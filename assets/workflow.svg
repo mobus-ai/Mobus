@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 760" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0f1117"/>
+      <stop offset="1" stop-color="#0a0c12"/>
+    </linearGradient>
+
+    <linearGradient id="accent1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#818cf8"/>
+      <stop offset="1" stop-color="#6366f1"/>
+    </linearGradient>
+    <linearGradient id="accent2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#14b8a6"/>
+    </linearGradient>
+    <linearGradient id="accent3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fbbf24"/>
+      <stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="accent4" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f472b6"/>
+      <stop offset="1" stop-color="#ec4899"/>
+    </linearGradient>
+    <linearGradient id="accent5" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fb923c"/>
+      <stop offset="1" stop-color="#f97316"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1400" height="760" fill="url(#bg)"/>
+
+  <!-- Header -->
+  <text x="60" y="60" fill="#e4e6f0" font-size="28" font-weight="600" letter-spacing="-0.5">Mobus Workflow</text>
+  <text x="60" y="86" fill="#6b7280" font-size="14" font-weight="400">15 tools &#183; 5 stages &#183; 20 dataset platforms</text>
+  <line x1="60" y1="106" x2="1340" y2="106" stroke="#1f2430" stroke-width="1"/>
+
+  <!-- Stage 1: Discovery -->
+  <g transform="translate(60, 140)">
+    <rect x="0" y="0" width="8" height="100" rx="4" fill="url(#accent1)"/>
+    <text x="24" y="22" fill="#9ca0b0" font-size="11" font-weight="600" letter-spacing="2">STAGE 01</text>
+    <text x="24" y="48" fill="#e4e6f0" font-size="20" font-weight="600" letter-spacing="-0.3">Discovery</text>
+    <text x="24" y="70" fill="#6b7280" font-size="13">Find datasets across 20+ platforms</text>
+
+    <g transform="translate(420, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#818cf8"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">search_datasets</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">Keyword, format, license, date filters</text>
+    </g>
+    <g transform="translate(720, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#818cf8"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">find_research_datasets</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">Used in academic papers</text>
+    </g>
+    <g transform="translate(1020, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#818cf8"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">find_similar</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">Like one you already have</text>
+    </g>
+  </g>
+
+  <!-- Stage 2: Evaluation -->
+  <g transform="translate(60, 260)">
+    <rect x="0" y="0" width="8" height="100" rx="4" fill="url(#accent2)"/>
+    <text x="24" y="22" fill="#9ca0b0" font-size="11" font-weight="600" letter-spacing="2">STAGE 02</text>
+    <text x="24" y="48" fill="#e4e6f0" font-size="20" font-weight="600" letter-spacing="-0.3">Evaluation</text>
+    <text x="24" y="70" fill="#6b7280" font-size="13">Inspect and compare before committing</text>
+
+    <g transform="translate(420, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#2dd4bf"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">get_dataset_details</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">Columns, rows, files, popularity</text>
+    </g>
+    <g transform="translate(720, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#2dd4bf"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">preview_dataset</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">First N rows before downloading</text>
+    </g>
+    <g transform="translate(1020, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#2dd4bf"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">compare_datasets</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">2-5 side by side</text>
+    </g>
+  </g>
+
+  <!-- Stage 3: Quality -->
+  <g transform="translate(60, 380)">
+    <rect x="0" y="0" width="8" height="100" rx="4" fill="url(#accent3)"/>
+    <text x="24" y="22" fill="#9ca0b0" font-size="11" font-weight="600" letter-spacing="2">STAGE 03</text>
+    <text x="24" y="48" fill="#e4e6f0" font-size="20" font-weight="600" letter-spacing="-0.3">Quality &amp; Compliance</text>
+    <text x="24" y="70" fill="#6b7280" font-size="13">Verify fitness before using or publishing</text>
+
+    <g transform="translate(420, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#fbbf24"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">assess_quality</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">Missing values, duplicates, stats</text>
+    </g>
+    <g transform="translate(720, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#fbbf24"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">check_license</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">Commercial / academic / internal</text>
+    </g>
+    <g transform="translate(1020, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#fbbf24"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">check_compatibility</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">Schema match against yours</text>
+    </g>
+  </g>
+
+  <!-- Stage 4: Citation -->
+  <g transform="translate(60, 500)">
+    <rect x="0" y="0" width="8" height="100" rx="4" fill="url(#accent4)"/>
+    <text x="24" y="22" fill="#9ca0b0" font-size="11" font-weight="600" letter-spacing="2">STAGE 04</text>
+    <text x="24" y="48" fill="#e4e6f0" font-size="20" font-weight="600" letter-spacing="-0.3">Citation &amp; Output</text>
+    <text x="24" y="70" fill="#6b7280" font-size="13">Cite properly and explore visually</text>
+
+    <g transform="translate(420, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#f472b6"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">generate_citation</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">APA, BibTeX, Chicago</text>
+    </g>
+    <g transform="translate(720, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#f472b6"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">visualize_dataset</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">Interactive ECharts dashboard</text>
+    </g>
+    <g transform="translate(1020, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#f472b6"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">watch_query</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">Monitor for new datasets</text>
+    </g>
+  </g>
+
+  <!-- Stage 5: Advanced -->
+  <g transform="translate(60, 620)">
+    <rect x="0" y="0" width="8" height="100" rx="4" fill="url(#accent5)"/>
+    <text x="24" y="22" fill="#9ca0b0" font-size="11" font-weight="600" letter-spacing="2">STAGE 05</text>
+    <text x="24" y="48" fill="#e4e6f0" font-size="20" font-weight="600" letter-spacing="-0.3">Advanced Research</text>
+    <text x="24" y="70" fill="#6b7280" font-size="13">Deep academic lineage &amp; provenance</text>
+
+    <g transform="translate(420, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#fb923c"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">get_dataset_provenance</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">Introducing paper &amp; history</text>
+    </g>
+    <g transform="translate(720, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#fb923c"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">get_dataset_lineage</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">Variants and derivatives</text>
+    </g>
+    <g transform="translate(1020, 18)">
+      <rect x="0" y="0" width="280" height="64" rx="10" fill="#151823" stroke="#2a2f3d" stroke-width="1"/>
+      <circle cx="20" cy="32" r="4" fill="#fb923c"/>
+      <text x="38" y="28" fill="#e4e6f0" font-size="14" font-weight="600" font-family="ui-monospace, 'SF Mono', Menlo, monospace">trace_citation_graph</text>
+      <text x="38" y="48" fill="#6b7280" font-size="12">Citation chain analysis</text>
+    </g>
+  </g>
+</svg>
