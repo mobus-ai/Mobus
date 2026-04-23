@@ -18,8 +18,8 @@
 Add Mobus to Claude in under a minute. No install, no API keys, nothing to run.
 
 1. Open **claude.ai** (or Claude Desktop / Mobile)
-2. Go to **Settings** → **Integrations**
-3. Click **Add custom integration**
+2. Go to **Settings** from the bottom left → **Connectors**
+3. Click **Add custom connector**
 4. Name it **Mobus** and paste this URL:
 
 ```
