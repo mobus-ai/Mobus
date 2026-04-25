@@ -83,7 +83,7 @@ Mobus fans requests out to every configured platform **in parallel**, checks lic
 
 #### Citation & Output
 - `generate_citation` — APA, BibTeX, Chicago
-- `visualize_dataset` — interactive ECharts dashboard
+- `visualize_dataset (Only works locally)` — interactive ECharts dashboard
 - `watch_query` — monitor for new datasets
 
 #### Advanced Research
@@ -210,7 +210,7 @@ Same config format, in `~/Library/Application Support/Claude/claude_desktop_conf
 | `source` / `dataset_id` | string | required | — |
 | `rows` | number | 10 | Max 100 |
 
-### `visualize_dataset`
+### `visualize_dataset (Only works locally)`
 Generates an interactive ECharts dashboard with column picker, filter builder, row range selector, 9 chart types, sortable table, and PNG/SVG/CSV/JSON export.
 
 | Parameter | Type | Default | Description |
