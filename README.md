@@ -35,13 +35,13 @@ That's it. All 15 tools are available immediately.
 ---
 
 <p align="center">
-  <video src="https://github.com/user-attachments/assets/984d6814-72be-45ef-9d6b-389b28ed4def" width="100%" autoplay loop muted></video>
+  <video src="https://github.com/user-attachments/assets/a034855f-2c52-4691-8686-65ca97fe5d22" width="100%" autoplay loop muted></video>
 </p>
 
 ---
 
 <p align="center">
-  <img alt="Mobus workflow: 5 stages, 15 tools" src="https://github.com/user-attachments/assets/b100cc7c-8a75-4f94-9d2a-83bfc4f40a68" width="100%" />
+  <img alt="Mobus workflow: 5 stages, 15 tools" src="https://github.com/user-attachments/assets/c65b5f0c-fffe-4bd6-aacc-25277ff33aeb" width="100%" />
 </p>
 
 ## What it does
