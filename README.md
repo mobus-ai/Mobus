@@ -2,7 +2,8 @@
 
 # Mobus
 
-**Dataset search for AI assistants** — discover, preview, and analyze datasets across **20 platforms** from a single conversation.
+**Dataset search for AI assistants**
+Discover, preview, and analyze datasets across **20 platforms** from a single conversation.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-3c873a.svg)](https://nodejs.org)
