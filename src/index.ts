@@ -389,7 +389,7 @@ export function createServer(opts: ServerOptions = {}): {
     },
   );
 
-  // ─── Tool: watch_query ──────────────────────────────────────────────────────
+  // Check ─── Tool: watch_query ──────────────────────────────────────────────────────
 
   server.tool(
     "watch_query",
