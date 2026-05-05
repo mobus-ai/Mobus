@@ -34,6 +34,7 @@ import { censusAdapter } from "./adapters/census.js";
 import { secEdgarAdapter } from "./adapters/sec-edgar.js";
 import { crossrefAdapter } from "./adapters/crossref.js";
 import { econdbAdapter } from "./adapters/econdb.js";
+import { harvardDataverseAdapter } from "./adapters/harvard-dataverse.js";
 import { findResearchDatasets } from "./tools/find-research-datasets.js";
 import { getDatasetProvenance } from "./tools/get-dataset-provenance.js";
 import { traceCitationGraph } from "./tools/trace-citation-graph.js";
@@ -63,6 +64,7 @@ export function buildAdapterMap(): Map<Source, SourceAdapter> {
     secEdgarAdapter,
     crossrefAdapter,
     econdbAdapter,
+    harvardDataverseAdapter,
   ];
 
   for (const adapter of all) {
@@ -89,15 +91,28 @@ export interface ServerOptions {
   baseUrl?: string;
 }
 
+const DEFAULT_PUBLIC_URL = "https://mobus-production.up.railway.app";
+
 export function createServer(opts: ServerOptions = {}): {
   server: McpServer;
   adapters: Map<Source, SourceAdapter>;
 } {
   const adapters = buildAdapterMap();
+  const publicUrl = opts.baseUrl ?? process.env.BASE_URL ?? DEFAULT_PUBLIC_URL;
 
   const server = new McpServer({
-    name: "dataset-search",
+    name: "mobus",
+    title: "Mobus",
     version: "2.1.0",
+    description: "Dataset search for AI assistants across 21 platforms.",
+    websiteUrl: publicUrl,
+    icons: [
+      {
+        src: `${publicUrl}/logo.png`,
+        mimeType: "image/png",
+        sizes: ["256x256"],
+      },
+    ],
   });
 
   const sourceEnum = z.enum(SOURCES as unknown as [string, ...string[]]);
@@ -106,7 +121,7 @@ export function createServer(opts: ServerOptions = {}): {
 
   server.tool(
     "search_datasets",
-    "Search for datasets across multiple platforms (Kaggle, Hugging Face, data.gov, Zenodo, OpenML, UCI, Google, AWS, World Bank, WHO, NASA, Eurostat, Socrata, Papers with Code, Semantic Scholar, arXiv, Census.gov, SEC EDGAR, Crossref, Econdb) with optional filters",
+    "Search for datasets across multiple platforms (Kaggle, Hugging Face, data.gov, Zenodo, OpenML, UCI, Google, AWS, World Bank, WHO, NASA, Eurostat, Socrata, Papers with Code, Semantic Scholar, arXiv, Census.gov, SEC EDGAR, Crossref, Econdb, Harvard Dataverse) with optional filters",
     {
       query: z.string().describe("Search query, e.g. 'climate change temperature'"),
       sources: z

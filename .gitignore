@@ -1,4 +1,18 @@
 node_modules/
 dist/
 .env
-*.tgz
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# DAV-MCP local data
+.dav-mcp/
+

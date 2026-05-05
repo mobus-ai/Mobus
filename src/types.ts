@@ -19,6 +19,7 @@ export const SOURCES = [
   "sec-edgar",
   "crossref",
   "econdb",
+  "harvard-dataverse",
 ] as const;
 
 export type Source = (typeof SOURCES)[number];
