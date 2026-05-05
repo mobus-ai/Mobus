@@ -24,7 +24,7 @@ Add Mobus to Claude in under a minute. No install, no API keys, nothing to run.
 4. Name it **Mobus** and paste this URL:
 
 ```
-https://mobus-production.up.railway.app/mcp
+https://mcp.mobus.ai/mcp
 ```
 
 5. Start a new chat and try:
