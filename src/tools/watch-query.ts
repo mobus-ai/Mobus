@@ -1,4 +1,4 @@
-import type { DatasetResult, Source, SourceAdapter, WatchEntry } from "../types.js";
+import type { DatasetResult, SearchSource, SourceAdapter, WatchEntry } from "../types.js";
 import {
   addWatch,
   removeWatch,
@@ -19,11 +19,11 @@ export interface WatchResult {
 }
 
 export async function watchQuery(
-  adapters: Map<Source, SourceAdapter>,
+  adapters: Map<SearchSource, SourceAdapter>,
   action: WatchAction,
   options: {
     query?: string;
-    sources?: Source[];
+    sources?: SearchSource[];
     watchId?: string;
   },
 ): Promise<WatchResult> {
@@ -64,7 +64,7 @@ export async function watchQuery(
       const watch = await getWatch(options.watchId);
       if (!watch) throw new Error(`Watch "${options.watchId}" not found.`);
 
-      const selected = watch.sources ?? ([...adapters.keys()] as Source[]);
+      const selected = watch.sources ?? [...adapters.keys()];
       const allResults: DatasetResult[] = [];
 
       const settled = await Promise.allSettled(

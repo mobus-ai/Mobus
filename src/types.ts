@@ -1,4 +1,4 @@
-export const SOURCES = [
+export const SEARCH_SOURCES = [
   "kaggle",
   "huggingface",
   "datagov",
@@ -12,17 +12,33 @@ export const SOURCES = [
   "nasa",
   "eurostat",
   "socrata",
-  "papers-with-code",
   "semantic-scholar",
   "arxiv",
   "census",
   "sec-edgar",
   "crossref",
-  "econdb",
   "harvard-dataverse",
+  "openalex",
+  "europepmc",
+  "openreview",
+  "datacite",
+  "github",
+  "huggingface-models",
+  "openneuro",
 ] as const;
 
-export type Source = (typeof SOURCES)[number];
+export const ENRICHMENT_SOURCES = [
+  "unpaywall",
+  "opencitations",
+  "nih-icite",
+] as const;
+
+export type SearchSource = (typeof SEARCH_SOURCES)[number];
+export type EnrichmentSource = (typeof ENRICHMENT_SOURCES)[number];
+export type Source = SearchSource | EnrichmentSource;
+
+/** @deprecated Use SEARCH_SOURCES instead */
+export const SOURCES = SEARCH_SOURCES;
 
 export interface PopularityMetrics {
   downloads?: number;
@@ -32,7 +48,7 @@ export interface PopularityMetrics {
 }
 
 export interface DatasetResult {
-  source: Source;
+  source: SearchSource;
   id: string;
   name: string;
   description: string;
@@ -41,6 +57,9 @@ export interface DatasetResult {
   tags?: string[];
   lastUpdated?: string;
   popularity?: PopularityMetrics;
+  authors?: string[];
+  available_on?: SearchSource[];
+  alternate_ids?: Array<{ source: SearchSource; id: string }>;
 }
 
 export interface ColumnInfo {
@@ -61,7 +80,7 @@ export interface PreviewRow {
 }
 
 export interface PreviewResult {
-  source: Source;
+  source: SearchSource;
   id: string;
   columns: ColumnInfo[];
   rows: PreviewRow[];
@@ -69,7 +88,7 @@ export interface PreviewResult {
 }
 
 export interface QualityReport {
-  source: Source;
+  source: SearchSource;
   id: string;
   sampleSize: number;
   totalRows?: number;
@@ -91,7 +110,7 @@ export interface QualityReport {
 export interface WatchEntry {
   id: string;
   query: string;
-  sources?: Source[];
+  sources?: SearchSource[];
   createdAt: string;
   lastCheckedAt?: string;
   lastResultIds?: string[];
@@ -109,9 +128,27 @@ export interface LicenseInfo {
 }
 
 export interface SourceAdapter {
-  source: Source;
+  source: SearchSource;
   search(query: string, limit: number): Promise<DatasetResult[]>;
   getDetails(datasetId: string): Promise<DatasetDetails>;
   preview?(datasetId: string, rows: number): Promise<PreviewResult>;
   getPopularity?(datasetId: string): Promise<PopularityMetrics>;
+}
+
+export interface EnrichmentResult {
+  source: EnrichmentSource;
+  doi: string;
+  openAccessUrl?: string;
+  pdfUrl?: string;
+  license?: string;
+  citationCount?: number;
+  referenceCount?: number;
+  citedByDois?: string[];
+  referencesDois?: string[];
+  [key: string]: unknown;
+}
+
+export interface EnrichmentAdapter {
+  source: EnrichmentSource;
+  enrich(doi: string): Promise<EnrichmentResult>;
 }

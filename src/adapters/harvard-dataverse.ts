@@ -154,6 +154,7 @@ export const harvardDataverseAdapter: SourceAdapter = {
         url: item.url,
         tags: item.subjects,
         lastUpdated: item.updatedAt ?? item.published_at,
+        authors: item.authors,
       }));
   },
 

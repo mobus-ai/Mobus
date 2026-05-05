@@ -1,4 +1,3 @@
-import { pwcSearchDatasets } from "../adapters/papers-with-code.js";
 import { apiCache, CacheTTL } from "./cache.js";
 import { DATASET_ALIASES } from "./dataset-aliases.js";
 
@@ -22,16 +21,6 @@ async function loadKnownDatasets(): Promise<Map<string, string>> {
       map.set(alias.toLowerCase(), canonical);
     }
   }
-
-  try {
-    const popular = await pwcSearchDatasets("", 50);
-    for (const d of popular) {
-      const name = d.full_name ?? d.name;
-      if (name.length >= 3) {
-        map.set(name.toLowerCase(), name);
-      }
-    }
-  } catch { /* best-effort */ }
 
   knownDatasets = map;
   apiCache.set(cacheKey, map, CacheTTL.KNOWN_DATASETS);
@@ -124,24 +113,6 @@ export async function extractAndValidateDatasets(
         break;
       }
     }
-  }
-
-  // For unmatched candidates, try PwC validation (up to 3 to limit API calls)
-  const unmatched = raw.filter(
-    (c) => !validated.some((v) => v.toLowerCase() === c.toLowerCase()),
-  );
-  for (const candidate of unmatched.slice(0, 3)) {
-    try {
-      const results = await pwcSearchDatasets(candidate, 3);
-      const match = results.find((r) => {
-        const rName = (r.full_name ?? r.name).toLowerCase();
-        const cName = candidate.toLowerCase();
-        return rName.includes(cName) || cName.includes(rName);
-      });
-      if (match) {
-        validated.push(match.full_name ?? match.name);
-      }
-    } catch { /* skip */ }
   }
 
   return [...new Set(validated)];

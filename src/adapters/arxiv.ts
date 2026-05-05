@@ -130,6 +130,7 @@ function toResult(e: ArxivEntry): DatasetResult {
     url: e.absUrl,
     tags: e.categories,
     lastUpdated: e.published?.split("T")[0],
+    authors: e.authors,
     popularity: {},
   };
 }

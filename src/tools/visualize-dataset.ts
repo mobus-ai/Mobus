@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 import { exec } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import type { Source, SourceAdapter } from "../types.js";
+import type { SearchSource, SourceAdapter } from "../types.js";
 import { fetchCSVPreview } from "../utils/csv-parser.js";
 import { buildDashboardHTML, type ChartData } from "../utils/chart-generator.js";
 
@@ -30,8 +30,8 @@ function pruneExpiredCharts(): void {
 }
 
 export async function visualizeDataset(
-  adapters: Map<Source, SourceAdapter>,
-  source: Source,
+  adapters: Map<SearchSource, SourceAdapter>,
+  source: SearchSource,
   datasetId: string,
   rows: number,
   shouldOpen: boolean,

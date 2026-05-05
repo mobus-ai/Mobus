@@ -1,7 +1,7 @@
-import type { ColumnInfo, PreviewRow, QualityReport, Source } from "../types.js";
+import type { ColumnInfo, PreviewRow, QualityReport, SearchSource } from "../types.js";
 
 export function analyzeQuality(
-  source: Source,
+  source: SearchSource,
   id: string,
   columns: ColumnInfo[],
   rows: PreviewRow[],

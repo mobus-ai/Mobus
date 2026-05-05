@@ -40,9 +40,6 @@ class TTLCache {
 export const apiCache = new TTLCache();
 
 export const CacheTTL = {
-  PWC_PAPER_COUNT: 30 * 60_000,
-  PWC_SEARCH: 10 * 60_000,
-  PWC_DATASET: 30 * 60_000,
   S2_PAPER_BY_ID: 60 * 60_000,
   S2_SEARCH: 10 * 60_000,
   ARXIV_SEARCH: 15 * 60_000,

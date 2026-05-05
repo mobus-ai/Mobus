@@ -1,13 +1,13 @@
-import type { DatasetDetails, Source, SourceAdapter } from "../types.js";
+import type { DatasetDetails, SearchSource, SourceAdapter } from "../types.js";
 
 export interface DatasetRef {
-  source: Source;
+  source: SearchSource;
   dataset_id: string;
 }
 
 export interface ComparisonResult {
   datasets: Array<{
-    source: Source;
+    source: SearchSource;
     id: string;
     name: string;
     columns: string[];
@@ -25,7 +25,7 @@ export interface ComparisonResult {
 }
 
 export async function compareDatasets(
-  adapters: Map<Source, SourceAdapter>,
+  adapters: Map<SearchSource, SourceAdapter>,
   refs: DatasetRef[],
 ): Promise<ComparisonResult> {
   const settled = await Promise.allSettled(

@@ -1,10 +1,10 @@
-import type { QualityReport, Source, SourceAdapter } from "../types.js";
+import type { QualityReport, SearchSource, SourceAdapter } from "../types.js";
 import { fetchCSVPreview } from "../utils/csv-parser.js";
 import { analyzeQuality } from "../utils/quality-checker.js";
 
 export async function assessQuality(
-  adapters: Map<Source, SourceAdapter>,
-  source: Source,
+  adapters: Map<SearchSource, SourceAdapter>,
+  source: SearchSource,
   datasetId: string,
   sampleRows: number,
 ): Promise<QualityReport> {

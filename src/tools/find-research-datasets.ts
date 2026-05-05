@@ -1,10 +1,4 @@
-import type { Source, SourceAdapter } from "../types.js";
-import {
-  pwcSearchTasks,
-  pwcGetTaskDatasets,
-  pwcSearchDatasets,
-  pwcGetDatasetPaperCount,
-} from "../adapters/papers-with-code.js";
+import type { SearchSource, SourceAdapter } from "../types.js";
 import {
   s2SearchPapers,
   s2SemanticSearch,
@@ -15,7 +9,7 @@ import { getSearchVariants } from "../utils/dataset-aliases.js";
 interface DatasetAction {
   tool: "preview_dataset" | "visualize_dataset" | "get_dataset_details" | "assess_quality" | "check_license";
   params: {
-    source: Source;
+    source: SearchSource;
     dataset_id: string;
     [key: string]: unknown;
   };
@@ -39,12 +33,12 @@ interface ResearchDatasetResult {
     arxivId?: string;
   }>;
   tasks: string[];
-  availableOn: Array<{ source: Source; id: string; url: string }>;
+  availableOn: Array<{ source: SearchSource; id: string; url: string }>;
   actions: DatasetAction[];
 }
 
 export async function findResearchDatasets(
-  adapters: Map<Source, SourceAdapter>,
+  adapters: Map<SearchSource, SourceAdapter>,
   query: string,
   limit: number = 10,
   maxPapersPerDataset: number = 5,
@@ -64,72 +58,33 @@ export async function findResearchDatasets(
     paperCount: number;
   }>();
 
-  // Strategy 1: search PwC tasks → get evaluation tables → extract datasets
+  // Search Semantic Scholar for papers mentioning datasets related to the query
   try {
-    const tasks = await pwcSearchTasks(query, 5);
-    for (const task of tasks) {
-      try {
-        const evals = await pwcGetTaskDatasets(task.id);
-        for (const ev of evals) {
-          if (ev.dataset && !datasetMap.has(ev.dataset)) {
-            datasetMap.set(ev.dataset, {
-              id: ev.dataset,
-              name: ev.dataset,
-              url: `https://paperswithcode.com/dataset/${ev.dataset}`,
-              tasks: new Set([task.name]),
-              paperCount: 0,
-            });
-          } else if (ev.dataset && datasetMap.has(ev.dataset)) {
-            datasetMap.get(ev.dataset)!.tasks.add(task.name);
-          }
+    const searchFn = semantic ? s2SemanticSearch : s2SearchPapers;
+    const { papers } = await searchFn(`${query} dataset`, limit * 3);
+    for (const p of papers) {
+      const meta = extractS2PaperMeta(p);
+      if (meta.publicationTypes?.includes("Dataset") || /dataset|benchmark|corpus/i.test(meta.title)) {
+        const id = meta.paperId;
+        if (!datasetMap.has(id)) {
+          datasetMap.set(id, {
+            id,
+            name: meta.title,
+            url: meta.url ?? `https://api.semanticscholar.org/graph/v1/paper/${id}`,
+            tasks: new Set<string>(),
+            paperCount: meta.citationCount ?? 0,
+          });
         }
-      } catch { /* skip individual task failures */ }
-    }
-  } catch (err) {
-    errors["pwc-tasks"] = (err as Error).message;
-  }
-
-  // Strategy 2: search PwC datasets directly
-  try {
-    const datasets = await pwcSearchDatasets(query, limit);
-    for (const d of datasets) {
-      if (!datasetMap.has(d.id)) {
-        datasetMap.set(d.id, {
-          id: d.id,
-          name: d.full_name ?? d.name,
-          url: d.homepage ?? `https://paperswithcode.com/dataset/${d.id}`,
-          tasks: new Set<string>(),
-          paperCount: d.num_papers ?? 0,
-        });
-      } else {
-        const existing = datasetMap.get(d.id)!;
-        if (d.num_papers && d.num_papers > existing.paperCount) {
-          existing.paperCount = d.num_papers;
-        }
-        if (d.full_name) existing.name = d.full_name;
       }
     }
   } catch (err) {
-    errors["pwc-datasets"] = (err as Error).message;
+    errors["semantic-scholar"] = (err as Error).message;
   }
 
-  // Get paper counts for datasets that don't have them yet
-  const countPromises = [...datasetMap.entries()]
-    .filter(([_, d]) => d.paperCount === 0)
-    .slice(0, 15)
-    .map(async ([id, d]) => {
-      try {
-        d.paperCount = await pwcGetDatasetPaperCount(id);
-      } catch { /* non-critical */ }
-    });
-  await Promise.allSettled(countPromises);
-
-  // Sort by paper count and take top `limit`
   const ranked = [...datasetMap.values()]
     .sort((a, b) => b.paperCount - a.paperCount)
     .slice(0, limit);
 
-  // Enrich top datasets with S2 paper metadata
   const results: ResearchDatasetResult[] = [];
   const enrichPromises = ranked.map(async (d) => {
     let samplePapers: ResearchDatasetResult["samplePapers"] = [];
@@ -156,7 +111,6 @@ export async function findResearchDatasets(
       });
     } catch { /* S2 enrichment is best-effort */ }
 
-    // Cross-reference against existing DAV adapters
     const availableOn = await crossReference(adapters, d.name);
 
     results.push({
@@ -189,13 +143,13 @@ export async function findResearchDatasets(
 }
 
 async function crossReference(
-  adapters: Map<Source, SourceAdapter>,
+  adapters: Map<SearchSource, SourceAdapter>,
   datasetName: string,
-): Promise<Array<{ source: Source; id: string; url: string }>> {
-  const found: Array<{ source: Source; id: string; url: string }> = [];
-  const seenSources = new Set<Source>();
+): Promise<Array<{ source: SearchSource; id: string; url: string }>> {
+  const found: Array<{ source: SearchSource; id: string; url: string }> = [];
+  const seenSources = new Set<SearchSource>();
 
-  const skipSources = new Set<Source>(["papers-with-code", "semantic-scholar", "arxiv"]);
+  const skipSources = new Set<SearchSource>(["semantic-scholar", "arxiv"]);
   const sources = [...adapters.keys()].filter((s) => !skipSources.has(s));
 
   const searchNames = getSearchVariants(datasetName);
@@ -247,7 +201,7 @@ async function crossReference(
 }
 
 function buildActions(
-  availableOn: Array<{ source: Source; id: string; url: string }>,
+  availableOn: Array<{ source: SearchSource; id: string; url: string }>,
 ): DatasetAction[] {
   const actions: DatasetAction[] = [];
   for (const entry of availableOn) {

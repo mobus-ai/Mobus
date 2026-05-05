@@ -1,4 +1,5 @@
-import type { DatasetResult, Source, SourceAdapter } from "../types.js";
+import type { DatasetResult, SearchSource, SourceAdapter } from "../types.js";
+import { deduplicateResults } from "../utils/dedup.js";
 
 export interface SearchFilters {
   license?: string;
@@ -9,9 +10,9 @@ export interface SearchFilters {
 }
 
 export async function searchDatasets(
-  adapters: Map<Source, SourceAdapter>,
+  adapters: Map<SearchSource, SourceAdapter>,
   query: string,
-  sources: Source[] | undefined,
+  sources: SearchSource[] | undefined,
   limit: number,
   filters?: SearchFilters,
 ): Promise<{ results: DatasetResult[]; errors: Record<string, string> }> {
@@ -39,6 +40,8 @@ export async function searchDatasets(
       errors[src] = outcome.reason?.message ?? String(outcome.reason);
     }
   }
+
+  results = deduplicateResults(results);
 
   if (filters) {
     results = applyFilters(results, filters);

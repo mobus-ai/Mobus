@@ -27,6 +27,7 @@ function sanitizeKey(id: string): string {
 }
 
 function extractAuthor(details: DatasetDetails): string {
+  if (details.authors?.length) return details.authors.join(", ");
   const id = details.id;
   if (id.includes("/")) return id.split("/")[0];
   return details.source;

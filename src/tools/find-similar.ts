@@ -1,8 +1,8 @@
-import type { DatasetResult, Source, SourceAdapter } from "../types.js";
+import type { DatasetResult, SearchSource, SourceAdapter } from "../types.js";
 
 export async function findSimilar(
-  adapters: Map<Source, SourceAdapter>,
-  source: Source,
+  adapters: Map<SearchSource, SourceAdapter>,
+  source: SearchSource,
   datasetId: string,
   limit: number = 5,
 ): Promise<{ reference: DatasetResult; similar: DatasetResult[] }> {

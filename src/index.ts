@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { SOURCES, type Source, type SourceAdapter } from "./types.js";
+import { SEARCH_SOURCES, ENRICHMENT_SOURCES, type SearchSource, type EnrichmentSource, type SourceAdapter } from "./types.js";
+import { buildEnrichmentMap, enrichDoi } from "./utils/enrichment.js";
 import { searchDatasets, type SearchFilters } from "./tools/search-datasets.js";
 import { getDatasetDetails } from "./tools/get-dataset-details.js";
 import { previewDataset } from "./tools/preview-dataset.js";
@@ -27,21 +28,23 @@ import { whoAdapter } from "./adapters/who.js";
 import { nasaAdapter } from "./adapters/nasa.js";
 import { eurostatAdapter } from "./adapters/eurostat.js";
 import { socrataAdapter } from "./adapters/socrata.js";
-import { papersWithCodeAdapter } from "./adapters/papers-with-code.js";
 import { semanticScholarAdapter } from "./adapters/semantic-scholar.js";
 import { arxivAdapter } from "./adapters/arxiv.js";
 import { censusAdapter } from "./adapters/census.js";
 import { secEdgarAdapter } from "./adapters/sec-edgar.js";
 import { crossrefAdapter } from "./adapters/crossref.js";
-import { econdbAdapter } from "./adapters/econdb.js";
 import { harvardDataverseAdapter } from "./adapters/harvard-dataverse.js";
+import { openAlexAdapter } from "./adapters/openalex.js";
+import { europmcAdapter } from "./adapters/europepmc.js";
+import { openReviewAdapter } from "./adapters/openreview.js";
+import { dataCiteAdapter } from "./adapters/datacite.js";
+import { githubAdapter } from "./adapters/github.js";
+import { huggingFaceModelsAdapter } from "./adapters/huggingface-models.js";
+import { openNeuroAdapter } from "./adapters/openneuro.js";
 import { findResearchDatasets } from "./tools/find-research-datasets.js";
-import { getDatasetProvenance } from "./tools/get-dataset-provenance.js";
-import { traceCitationGraph } from "./tools/trace-citation-graph.js";
-import { getDatasetLineage } from "./tools/get-dataset-lineage.js";
 
-export function buildAdapterMap(): Map<Source, SourceAdapter> {
-  const adapters = new Map<Source, SourceAdapter>();
+export function buildAdapterMap(): Map<SearchSource, SourceAdapter> {
+  const adapters = new Map<SearchSource, SourceAdapter>();
 
   const all: SourceAdapter[] = [
     kaggleAdapter,
@@ -57,14 +60,19 @@ export function buildAdapterMap(): Map<Source, SourceAdapter> {
     nasaAdapter,
     eurostatAdapter,
     socrataAdapter,
-    papersWithCodeAdapter,
     semanticScholarAdapter,
     arxivAdapter,
     censusAdapter,
     secEdgarAdapter,
     crossrefAdapter,
-    econdbAdapter,
     harvardDataverseAdapter,
+    openAlexAdapter,
+    europmcAdapter,
+    openReviewAdapter,
+    dataCiteAdapter,
+    githubAdapter,
+    huggingFaceModelsAdapter,
+    openNeuroAdapter,
   ];
 
   for (const adapter of all) {
@@ -95,16 +103,17 @@ const DEFAULT_PUBLIC_URL = "https://mobus-production.up.railway.app";
 
 export function createServer(opts: ServerOptions = {}): {
   server: McpServer;
-  adapters: Map<Source, SourceAdapter>;
+  adapters: Map<SearchSource, SourceAdapter>;
 } {
   const adapters = buildAdapterMap();
+  const enrichers = buildEnrichmentMap();
   const publicUrl = opts.baseUrl ?? process.env.BASE_URL ?? DEFAULT_PUBLIC_URL;
 
   const server = new McpServer({
     name: "mobus",
     title: "Mobus",
     version: "2.1.0",
-    description: "Dataset search for AI assistants across 21 platforms.",
+    description: "Dataset and research paper search for AI assistants across 26 platforms, with DOI enrichment via Unpaywall, OpenCitations, and NIH iCite.",
     websiteUrl: publicUrl,
     icons: [
       {
@@ -115,13 +124,13 @@ export function createServer(opts: ServerOptions = {}): {
     ],
   });
 
-  const sourceEnum = z.enum(SOURCES as unknown as [string, ...string[]]);
+  const sourceEnum = z.enum(SEARCH_SOURCES as unknown as [string, ...string[]]);
 
   // ─── Tool: search_datasets ──────────────────────────────────────────────────
 
   server.tool(
     "search_datasets",
-    "Search for datasets across multiple platforms (Kaggle, Hugging Face, data.gov, Zenodo, OpenML, UCI, Google, AWS, World Bank, WHO, NASA, Eurostat, Socrata, Papers with Code, Semantic Scholar, arXiv, Census.gov, SEC EDGAR, Crossref, Econdb, Harvard Dataverse) with optional filters",
+    "Search for datasets and papers across 26 platforms (Kaggle, Hugging Face, data.gov, Zenodo, OpenML, UCI, Google, AWS, World Bank, WHO, NASA, Eurostat, Socrata, Semantic Scholar, arXiv, Census.gov, SEC EDGAR, Crossref, Harvard Dataverse, OpenAlex, Europe PMC, OpenReview, DataCite, GitHub, HuggingFace Models, OpenNeuro) with deduplication and optional filters",
     {
       query: z.string().describe("Search query, e.g. 'climate change temperature'"),
       sources: z
@@ -164,7 +173,7 @@ export function createServer(opts: ServerOptions = {}): {
       const { results, errors } = await searchDatasets(
         adapters,
         query,
-        sources as Source[] | undefined,
+        sources as SearchSource[] | undefined,
         limit,
         Object.keys(filters).length > 0 ? filters : undefined,
       );
@@ -193,7 +202,7 @@ export function createServer(opts: ServerOptions = {}): {
     },
     READ_ONLY,
     async ({ source, dataset_id }) => {
-      const details = await getDatasetDetails(adapters, source as Source, dataset_id);
+      const details = await getDatasetDetails(adapters, source as SearchSource, dataset_id);
       return {
         content: [{ type: "text" as const, text: JSON.stringify(details, null, 2) }],
       };
@@ -219,7 +228,7 @@ export function createServer(opts: ServerOptions = {}): {
     },
     READ_ONLY,
     async ({ source, dataset_id, rows }) => {
-      const preview = await previewDataset(adapters, source as Source, dataset_id, rows);
+      const preview = await previewDataset(adapters, source as SearchSource, dataset_id, rows);
       return {
         content: [{ type: "text" as const, text: JSON.stringify(preview, null, 2) }],
       };
@@ -274,7 +283,7 @@ export function createServer(opts: ServerOptions = {}): {
     async ({ source, dataset_id, schema }) => {
       const result = await checkCompatibility(
         adapters,
-        source as Source,
+        source as SearchSource,
         dataset_id,
         schema as SchemaColumn[],
       );
@@ -303,7 +312,7 @@ export function createServer(opts: ServerOptions = {}): {
     },
     READ_ONLY,
     async ({ source, dataset_id, limit }) => {
-      const result = await findSimilar(adapters, source as Source, dataset_id, limit);
+      const result = await findSimilar(adapters, source as SearchSource, dataset_id, limit);
       return {
         content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
       };
@@ -326,7 +335,7 @@ export function createServer(opts: ServerOptions = {}): {
     },
     READ_ONLY,
     async ({ source, dataset_id, format }) => {
-      const result = await generateCitation(adapters, source as Source, dataset_id, format);
+      const result = await generateCitation(adapters, source as SearchSource, dataset_id, format);
       return {
         content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
       };
@@ -352,7 +361,7 @@ export function createServer(opts: ServerOptions = {}): {
     },
     READ_ONLY,
     async ({ source, dataset_id, sample_rows }) => {
-      const report = await assessQuality(adapters, source as Source, dataset_id, sample_rows);
+      const report = await assessQuality(adapters, source as SearchSource, dataset_id, sample_rows);
       return {
         content: [{ type: "text" as const, text: JSON.stringify(report, null, 2) }],
       };
@@ -373,7 +382,7 @@ export function createServer(opts: ServerOptions = {}): {
     },
     READ_ONLY,
     async ({ source, dataset_id, use_case }) => {
-      const result = await checkLicense(adapters, source as Source, dataset_id, use_case);
+      const result = await checkLicense(adapters, source as SearchSource, dataset_id, use_case);
       return {
         content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
       };
@@ -406,7 +415,7 @@ export function createServer(opts: ServerOptions = {}): {
     async ({ action, query, sources, watch_id }) => {
       const result = await watchQuery(adapters, action as WatchAction, {
         query,
-        sources: sources as Source[] | undefined,
+        sources: sources as SearchSource[] | undefined,
         watchId: watch_id,
       });
       return {
@@ -441,7 +450,7 @@ export function createServer(opts: ServerOptions = {}): {
     async ({ source, dataset_id, rows, open: shouldOpen }) => {
       const result = await visualizeDataset(
         adapters,
-        source as Source,
+        source as SearchSource,
         dataset_id,
         rows,
         shouldOpen,
@@ -474,7 +483,7 @@ export function createServer(opts: ServerOptions = {}): {
 
   server.tool(
     "find_research_datasets",
-    "Find datasets used in academic research for a given topic — searches Papers with Code tasks and datasets, enriches with Semantic Scholar paper metadata, and cross-references against all other DAV sources",
+    "Find datasets used in academic research for a given topic — searches Semantic Scholar and arXiv for paper metadata, and cross-references against all other sources",
     {
       query: z.string().describe("Research topic or task, e.g. 'sentiment analysis', 'medical image segmentation'"),
       limit: z
@@ -510,83 +519,27 @@ export function createServer(opts: ServerOptions = {}): {
     },
   );
 
-  // ─── Tool: get_dataset_provenance ───────────────────────────────────────────
+  // ─── Tool: enrich_result ────────────────────────────────────────────────────
 
-  server.tool(
-    "get_dataset_provenance",
-    "Get the full research provenance of a dataset: which papers used it, how popular it is, venue/year/field breakdowns, top-cited papers, trend over time, and the paper that introduced it",
-    {
-      dataset_id: z
-        .string()
-        .describe("Papers with Code dataset ID (e.g. 'imagenet', 'squad', 'coco')"),
-      max_papers: z
-        .number()
-        .int()
-        .min(1)
-        .max(50)
-        .optional()
-        .default(20)
-        .describe("Maximum papers to analyze for provenance (default 20)"),
-    },
-    READ_ONLY,
-    async ({ dataset_id, max_papers }) => {
-      const result = await getDatasetProvenance(dataset_id, max_papers);
-      return {
-        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
-      };
-    },
+  const enrichmentSourceEnum = z.enum(
+    ENRICHMENT_SOURCES as unknown as [string, ...string[]],
   );
 
-  // ─── Tool: trace_citation_graph ──────────────────────────────────────────────
-
   server.tool(
-    "trace_citation_graph",
-    "Trace the citation chain for a dataset: find the introducing paper, then follow citations to build a chronological narrative of how the dataset has been used, extended, and benchmarked over time",
+    "enrich_result",
+    "Enrich a dataset or paper by DOI: resolve open-access links, PDF URLs, citation counts, and reference graphs via Unpaywall, OpenCitations, and NIH iCite",
     {
-      dataset_id: z
-        .string()
-        .describe("Papers with Code dataset ID (e.g. 'imagenet', 'squad', 'coco')"),
-      max_chain_length: z
-        .number()
-        .int()
-        .min(1)
-        .max(30)
+      doi: z.string().describe("The DOI to enrich (e.g. '10.1234/foo')"),
+      sources: z
+        .array(enrichmentSourceEnum)
         .optional()
-        .default(15)
-        .describe("Maximum papers in the citation chain (default 15)"),
+        .describe("Enrichment sources to query. Omit to query all available."),
     },
     READ_ONLY,
-    async ({ dataset_id, max_chain_length }) => {
-      const result = await traceCitationGraph(dataset_id, max_chain_length);
+    async ({ doi, sources }) => {
+      const results = await enrichDoi(enrichers, doi, sources as EnrichmentSource[] | undefined);
       return {
-        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
-      };
-    },
-  );
-
-  // ─── Tool: get_dataset_lineage ──────────────────────────────────────────────
-
-  server.tool(
-    "get_dataset_lineage",
-    "Get the family tree of a dataset: find all variants, extensions, subsets, and derivative datasets (e.g. ImageNet → ImageNet-V2, ImageNet-Sketch, ImageNet-A) using name matching, citation graph analysis, and abstract-based lineage detection",
-    {
-      dataset_id: z
-        .string()
-        .describe("Papers with Code dataset ID (e.g. 'imagenet', 'squad', 'coco')"),
-      max_depth: z
-        .number()
-        .int()
-        .min(1)
-        .max(3)
-        .optional()
-        .default(2)
-        .describe("Maximum depth for lineage traversal (default 2)"),
-    },
-    READ_ONLY,
-    async ({ dataset_id, max_depth }) => {
-      const result = await getDatasetLineage(dataset_id, max_depth);
-      return {
-        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+        content: [{ type: "text" as const, text: JSON.stringify(results, null, 2) }],
       };
     },
   );

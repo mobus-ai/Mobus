@@ -1,8 +1,8 @@
-import type { DatasetDetails, Source, SourceAdapter } from "../types.js";
+import type { DatasetDetails, SearchSource, SourceAdapter } from "../types.js";
 
 export async function getDatasetDetails(
-  adapters: Map<Source, SourceAdapter>,
-  source: Source,
+  adapters: Map<SearchSource, SourceAdapter>,
+  source: SearchSource,
   datasetId: string,
 ): Promise<DatasetDetails> {
   const adapter = adapters.get(source);

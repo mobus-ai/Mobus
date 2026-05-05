@@ -2,12 +2,12 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { randomUUID } from "node:crypto";
-import type { WatchEntry, Source } from "../types.js";
+import type { WatchEntry, SearchSource } from "../types.js";
 
 // ─── Storage interface ──────────────────────────────────────────────────────
 
 export interface WatchStorage {
-  add(query: string, sources?: Source[], userSub?: string): Promise<WatchEntry>;
+  add(query: string, sources?: SearchSource[], userSub?: string): Promise<WatchEntry>;
   remove(watchId: string, userSub?: string): Promise<boolean>;
   list(userSub?: string): Promise<WatchEntry[]>;
   get(watchId: string, userSub?: string): Promise<WatchEntry | undefined>;
@@ -38,7 +38,7 @@ async function writeAll(entries: WatchEntry[]): Promise<void> {
 }
 
 class FileWatchStorage implements WatchStorage {
-  async add(query: string, sources?: Source[]): Promise<WatchEntry> {
+  async add(query: string, sources?: SearchSource[]): Promise<WatchEntry> {
     const entries = await readAll();
     const entry: WatchEntry = {
       id: randomUUID().slice(0, 8),
@@ -88,7 +88,7 @@ class PgWatchStorage implements WatchStorage {
     this.getPool = getPool;
   }
 
-  async add(query: string, sources?: Source[], userSub?: string): Promise<WatchEntry> {
+  async add(query: string, sources?: SearchSource[], userSub?: string): Promise<WatchEntry> {
     const db = this.getPool();
     const id = randomUUID().slice(0, 8);
     const now = new Date().toISOString();
@@ -124,7 +124,7 @@ class PgWatchStorage implements WatchStorage {
     return res.rows.map((r) => ({
       id: r.id,
       query: r.query,
-      sources: (r.sources as Source[]) ?? undefined,
+      sources: (r.sources as SearchSource[]) ?? undefined,
       createdAt: r.created_at,
       lastCheckedAt: r.last_checked_at ?? undefined,
       lastResultIds: r.last_result_ids ?? undefined,
@@ -149,7 +149,7 @@ class PgWatchStorage implements WatchStorage {
     return {
       id: r.id,
       query: r.query,
-      sources: (r.sources as Source[]) ?? undefined,
+      sources: (r.sources as SearchSource[]) ?? undefined,
       createdAt: r.created_at,
       lastCheckedAt: r.last_checked_at ?? undefined,
       lastResultIds: r.last_result_ids ?? undefined,
@@ -193,7 +193,7 @@ export function createPgWatchStorage(getPool: () => import("pg").Pool): WatchSto
   return new PgWatchStorage(getPool);
 }
 
-export async function addWatch(query: string, sources?: Source[]): Promise<WatchEntry> {
+export async function addWatch(query: string, sources?: SearchSource[]): Promise<WatchEntry> {
   return storage.add(query, sources);
 }
 

@@ -1,9 +1,9 @@
-import type { PreviewResult, Source, SourceAdapter } from "../types.js";
+import type { PreviewResult, SearchSource, SourceAdapter } from "../types.js";
 import { fetchCSVPreview } from "../utils/csv-parser.js";
 
 export async function previewDataset(
-  adapters: Map<Source, SourceAdapter>,
-  source: Source,
+  adapters: Map<SearchSource, SourceAdapter>,
+  source: SearchSource,
   datasetId: string,
   rows: number,
 ): Promise<PreviewResult> {

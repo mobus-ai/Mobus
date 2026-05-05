@@ -23,6 +23,7 @@ interface ZenodoRecord {
     license?: { id: string };
     keywords?: string[];
     publication_date?: string;
+    creators?: Array<{ name: string }>;
   };
   files?: ZenodoFile[];
   links?: { self?: string; html?: string };
@@ -56,6 +57,7 @@ export const zenodoAdapter: SourceAdapter = {
       license: r.metadata.license?.id,
       tags: r.metadata.keywords,
       lastUpdated: r.metadata.publication_date,
+      authors: r.metadata.creators?.map((c) => c.name),
       popularity: {
         downloads: r.stats?.downloads,
         views: r.stats?.views,

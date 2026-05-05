@@ -1,8 +1,8 @@
-import type { Source, SourceAdapter } from "../types.js";
+import type { SearchSource, SourceAdapter } from "../types.js";
 import { analyzeLicense, type UseCase } from "../utils/license-analyzer.js";
 
 export interface LicenseCheckResult {
-  source: Source;
+  source: SearchSource;
   id: string;
   license: string | undefined;
   useCase: UseCase;
@@ -12,8 +12,8 @@ export interface LicenseCheckResult {
 }
 
 export async function checkLicense(
-  adapters: Map<Source, SourceAdapter>,
-  source: Source,
+  adapters: Map<SearchSource, SourceAdapter>,
+  source: SearchSource,
   datasetId: string,
   useCase: UseCase,
 ): Promise<LicenseCheckResult> {

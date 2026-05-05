@@ -1,4 +1,4 @@
-import type { ColumnInfo, Source, SourceAdapter } from "../types.js";
+import type { ColumnInfo, SearchSource, SourceAdapter } from "../types.js";
 
 export interface SchemaColumn {
   name: string;
@@ -6,7 +6,7 @@ export interface SchemaColumn {
 }
 
 export interface CompatibilityResult {
-  source: Source;
+  source: SearchSource;
   id: string;
   matched: Array<{ name: string; userType?: string; datasetType?: string; typeMatch: boolean }>;
   missingInDataset: string[];
@@ -16,8 +16,8 @@ export interface CompatibilityResult {
 }
 
 export async function checkCompatibility(
-  adapters: Map<Source, SourceAdapter>,
-  source: Source,
+  adapters: Map<SearchSource, SourceAdapter>,
+  source: SearchSource,
   datasetId: string,
   schema: SchemaColumn[],
 ): Promise<CompatibilityResult> {

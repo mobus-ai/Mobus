@@ -71,6 +71,9 @@ function toResult(work: CrossrefWork): DatasetResult {
     license: work.license?.[0]?.URL,
     tags: work.subject,
     lastUpdated: issuedDate(work),
+    authors: work.author
+      ?.map((a) => a.name ?? [a.given, a.family].filter(Boolean).join(" "))
+      .filter((n) => n.length > 0),
     popularity: {
       citations: work["is-referenced-by-count"],
     },

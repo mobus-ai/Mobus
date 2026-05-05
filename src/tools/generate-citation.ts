@@ -1,9 +1,9 @@
-import type { Source, SourceAdapter } from "../types.js";
+import type { SearchSource, SourceAdapter } from "../types.js";
 import { formatCitation, type CitationFormat } from "../utils/citation-formatter.js";
 
 export async function generateCitation(
-  adapters: Map<Source, SourceAdapter>,
-  source: Source,
+  adapters: Map<SearchSource, SourceAdapter>,
+  source: SearchSource,
   datasetId: string,
   format: CitationFormat,
 ): Promise<{ citation: string; format: string }> {

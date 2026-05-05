@@ -299,6 +299,7 @@ function toResult(p: S2Paper): DatasetResult {
       ...(p.venue ? [p.venue] : []),
     ],
     lastUpdated: p.publicationDate ?? (p.year ? `${p.year}-01-01` : undefined),
+    authors: p.authors?.map((a) => a.name),
     popularity: {
       citations: p.citationCount,
     },
