@@ -116,7 +116,7 @@ Mobus fans requests out to every configured platform **in parallel**, checks lic
 - Census.gov
 - SEC EDGAR
 - Crossref
-- Harbard Dataverse
+- Harvard Dataverse
 
 </td><td valign="top">
 
