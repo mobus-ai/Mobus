@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/mobus-ai-mobus-badge.png)](https://mseep.ai/app/mobus-ai-mobus)
+
 <div align="center">
 
 # Mobus
